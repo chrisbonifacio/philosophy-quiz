@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { generateClient } from 'aws-amplify/api';
+import { Schema } from '../../amplify/data/resource';
 import { Card, Heading, Button, Collection, Text, Flex, View, Loader } from '@aws-amplify/ui-react';
+import { client } from '../lib/amplifyClient';
 
-const client = generateClient();
+interface GameLobbyProps {
+    user: {
+        username: string;
+    };
+    onGameStart: (game: Schema['GameSession']['type']) => void;
+}
 
-export function GameLobby({ user, onGameStart }) {
+export function GameLobby({ user, onGameStart }: GameLobbyProps) {
 
     useEffect(() => {
         const sub = client.models.GameSession.observeQuery()
@@ -24,7 +30,7 @@ export function GameLobby({ user, onGameStart }) {
     }, [user.username]);
 
     const [isSearching, setIsSearching] = useState(false);
-    const [availableGames, setAvailableGames] = useState([]);
+    const [availableGames, setAvailableGames] = useState<Schema['GameSession']['type'][]>([]);
 
     const createGame = async () => {
         try {
@@ -32,16 +38,19 @@ export function GameLobby({ user, onGameStart }) {
                 hostId: user.username,
                 status: 'WAITING',
                 players: [user.username],
-                scores: {},
+                scores: JSON.stringify({}),
                 currentRound: 0,
                 timeLeft: 30,
                 lastActionTime: new Date().toISOString(),
-                playerAnswers: {},
+                playerAnswers: JSON.stringify({}),
                 currentQuestion: '',
                 currentOptions: [],
                 correctAnswer: ''
             });
 
+            if (!newGame.data) {
+                throw new Error('Failed to create game session');
+            }
             setIsSearching(true);
             onGameStart(newGame.data);
         } catch (error) {
@@ -49,7 +58,7 @@ export function GameLobby({ user, onGameStart }) {
         }
     };
 
-    const joinGame = async (gameId) => {
+    const joinGame = async (gameId: string) => {
         try {
             const game = await client.models.GameSession.get({ id: gameId });
             if (game.data) {
@@ -58,6 +67,9 @@ export function GameLobby({ user, onGameStart }) {
                     players: [...game.data.players, user.username],
                     status: 'IN_PROGRESS'
                 });
+                if (!updatedGame.data) {
+                    throw new Error('Failed to update game session');
+                }
                 onGameStart(updatedGame.data);
             }
         } catch (error) {

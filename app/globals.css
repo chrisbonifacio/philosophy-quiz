@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Modern color variables */
+:root {
+    --primary-color: theme('colors.primary.600');
+    --primary-hover: theme('colors.primary.700');
+    --background-color: theme('colors.secondary.50');
+    --surface-color: theme('colors.white');
+    --text-primary: theme('colors.secondary.900');
+    --text-secondary: theme('colors.secondary.500');
+    --border-color: theme('colors.secondary.200');
+}
+
+@layer components {
+    .app {
+        @apply max-w-3xl mx-auto p-6;
+    }
+}
+
+body {
+    @apply bg-secondary-50 text-secondary-900 font-sans;
+}
+
+@layer components {
+    header {
+        @apply flex justify-between items-center mb-8 p-4 bg-white rounded-xl shadow-sm;
+    }
+
+    .game-lobby {
+        @apply text-center p-6 bg-white rounded-xl shadow-sm;
+    }
+}
+
+@layer components {
+    .game-list {
+        @apply mt-6;
+    }
+
+    .game-item {
+        @apply flex justify-between items-center p-4 bg-white border border-secondary-200 rounded-lg mb-3 transition-all duration-200 ease-in-out;
+    }
+
+    .game-item:hover {
+        @apply -translate-y-0.5 shadow-md;
+    }
+}
+
+@layer components {
+    .quiz-game {
+        @apply text-center p-6 bg-white rounded-xl shadow-sm;
+    }
+
+    .game-info {
+        @apply flex justify-between mb-6 text-secondary-500;
+    }
+
+    .statement {
+        @apply text-xl my-6 p-6 bg-secondary-50 rounded-lg leading-relaxed;
+    }
+
+    .options {
+        @apply grid grid-cols-2 gap-4 mt-6;
+    }
+
+    button {
+        @apply px-6 py-3 text-base cursor-pointer bg-primary-600 text-white rounded-lg transition-all duration-200 ease-in-out;
+    }
+
+    button:hover {
+        @apply bg-primary-700 -translate-y-0.5;
+    }
+
+    button.selected {
+        @apply bg-primary-700 ring-2 ring-primary-600;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .options {
+        @apply grid-cols-1;
+    }
+
+    .app {
+        @apply p-4;
+    }
+}

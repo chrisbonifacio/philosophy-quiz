@@ -10,14 +10,12 @@ import {
     View,
     Alert,
 } from '@aws-amplify/ui-react';
-import { generateClient } from 'aws-amplify/api';
 import { Schema } from '../../amplify/data/resource';
+import { client } from '../lib/amplifyClient';
 
 type Question = Schema['Question'];
 type QuestionCategory = Schema['QuestionCategory'];
 type QuestionDifficulty = Schema['QuestionDifficulty'];
-
-const client = generateClient<Schema>();
 
 const AdminQuestionManagement = () => {
     const [questions, setQuestions] = useState<Question['type'][]>([]);

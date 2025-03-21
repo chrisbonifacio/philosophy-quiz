@@ -8,6 +8,7 @@ import { Game } from '../src/components/Game';
 
 import '@aws-amplify/ui-react/styles.css';
 import { GameProvider, useGame } from '../src/contexts/GameContext';
+import { Navbar } from '@/src/components/Navbar';
 
 Amplify.configure(amplifyConfig);
 
@@ -16,23 +17,26 @@ export default function Home() {
     <Authenticator>
       {({ signOut, user }) => {
         const GameContent = () => {
-          const { currentGame } = useGame();
+          const { currentGame, setGame } = useGame();
           return (
-            <main className="min-h-screen p-4">
-              <div className="max-w-4xl mx-auto">
-                <div className="flex justify-between items-center mb-8">
-                  <h1 className="text-3xl font-bold">Philosophy Quiz</h1>
-                  <button
-                    onClick={signOut}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg"
-                  >
-                    Sign Out
-                  </button>
-                </div>
+            <>
+              <Navbar signOut={signOut} />
+              <main className="min-h-screen p-4">
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex justify-between items-center mb-8">
+                    <h1 className="text-3xl font-bold">Philosophy Quiz</h1>
+                    <button
+                      onClick={signOut}
+                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
 
-                {currentGame ? <Game /> : <Matchmaking />}
-              </div>
-            </main>
+                  {currentGame ? <Game gameId={currentGame.id} /> : <Matchmaking playerId={user?.username || ''} onMatchFound={(gameId) => setGame({ id: gameId })} />}
+                </div>
+              </main>
+            </>
           );
         };
 

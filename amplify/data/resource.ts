@@ -59,9 +59,8 @@ const schema = a.schema({
       index('status')
     ])
     .authorization(allow => [
-      allow.guest().to(['read']),
-      allow.authenticated().to(['read']),
-      allow.owner(),
+      allow.authenticated().to(['read', 'update']),
+      allow.ownersDefinedIn('players'),
       allow.group("Admin")
     ])
 })
@@ -71,6 +70,6 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'iam',
+    defaultAuthorizationMode: 'userPool',
   }
 });

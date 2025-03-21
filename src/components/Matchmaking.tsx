@@ -1,40 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { useGame } from '../contexts/GameContext';
+import React from 'react';
+import { useMatchmaking } from '../hooks/useMatchmaking';
 
-export const Matchmaking: React.FC = () => {
-    const [searching, setSearching] = useState(false);
-    const { setGame } = useGame();
+interface MatchmakingProps {
+    playerId: string;
+    onMatchFound: (gameSessionId: string) => void;
+}
 
-    const startMatchmaking = async () => {
-        setSearching(true);
-        // TODO: Implement matchmaking logic with Amplify API
-    };
+export const Matchmaking: React.FC<MatchmakingProps> = ({ playerId, onMatchFound }) => {
+    const {
+        isSearching,
+        gameSessionId,
+        matchStatus,
+        players,
+        error,
+        startMatchmaking,
+        cancelMatchmaking,
+    } = useMatchmaking(playerId);
 
-    const cancelMatchmaking = () => {
-        setSearching(false);
-        // TODO: Cancel matchmaking request
-    };
+    React.useEffect(() => {
+        if (matchStatus === 'IN_PROGRESS' && gameSessionId) {
+            onMatchFound(gameSessionId);
+        }
+    }, [matchStatus, gameSessionId]);
+
+    if (error) {
+        return <div className="error">{error}</div>;
+    }
 
     return (
-        <div className="max-w-md mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Philosophy Quiz Game</h1>
-
-            {!searching ? (
-                <button
-                    onClick={startMatchmaking}
-                    className="w-full py-3 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                >
-                    Find Game
+        <div className="matchmaking">
+            {!isSearching ? (
+                <button onClick={startMatchmaking}>
+                    Find Match
                 </button>
             ) : (
                 <div>
-                    <div className="text-center mb-4">Searching for players...</div>
-                    <button
-                        onClick={cancelMatchmaking}
-                        className="w-full py-3 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                    >
+                    <div>Searching for players... ({players.length}/2)</div>
+                    <button onClick={cancelMatchmaking}>
                         Cancel
                     </button>
+                </div>
+            )}
+
+            {matchStatus === 'WAITING' && (
+                <div>
+                    <h3>Players in lobby:</h3>
+                    <ul>
+                        {players.map(player => (
+                            <li key={player}>{player}</li>
+                        ))}
+                    </ul>
                 </div>
             )}
         </div>
