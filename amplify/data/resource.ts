@@ -40,19 +40,40 @@ const schema = a.schema({
       allow.group('Admin')
     ]),
   GameStatus: a.enum(["WAITING", "IN_PROGRESS", "COMPLETE"]),
+  PlayerAnswer: a
+    .model({
+      gameSessionId: a.id().required(),
+      gameSession: a.belongsTo('GameSession', 'gameSessionId'),
+      playerId: a.string().required(),
+      roundNumber: a.integer().required(),
+      answer: a.string().required(),
+      isCorrect: a.boolean().required(),
+      timeLeft: a.integer().required(),
+      timestamp: a.string().required()
+    })
+    .secondaryIndexes(index => [
+      index('gameSessionId'),
+      index('playerId')
+    ])
+    .authorization(allow => [
+      allow.authenticated().to(['read']),
+      allow.owner().to(['create']),
+      allow.group('Admin')
+    ]),
   GameSession: a
     .model({
       hostId: a.string().required(),
       status: a.ref("GameStatus").required(),
       players: a.string().array().required(),
       scores: a.json(),
-      currentRound: a.integer(),
+      currentRound: a.integer().required().default(0),
       timeLeft: a.integer(),
       lastActionTime: a.datetime(),
-      playerAnswers: a.json(),
-      currentQuestion: a.string(),
+      selectedQuestions: a.string().array().required(),  // Array of question IDs for this game session
+      currentQuestion: a.string(),  // Current question ID
       currentOptions: a.string().array(),
       correctAnswer: a.string(),
+      answers: a.hasMany('PlayerAnswer', 'gameSessionId')
     })
     .secondaryIndexes(index => [
       index('hostId').queryField("byHost"),

@@ -2,6 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+    .acrylic {
+        @apply bg-gradient-to-r from-indigo-600/80 via-blue-600/80 to-blue-700/80;
+        @apply backdrop-blur-md;
+        @apply border-b border-white/20;
+        @apply shadow-lg;
+        @apply supports-[backdrop-filter]:bg-white/10;
+    }
+}
+
+.glassmorphism-player-id {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    transform: translateY(2px);
+    transition: all 0.3s ease;
+}
+
+.glassmorphism-player-id:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(0);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+}
+
+
+
 /* Modern color variables */
 :root {
     --primary-color: theme('colors.primary.600');

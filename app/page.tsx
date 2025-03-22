@@ -1,16 +1,18 @@
 'use client';
 
-import { Amplify } from 'aws-amplify';
+import { useEffect, useState } from 'react';
+import { isUserAdmin } from '@/src/utils/auth';
 import { Authenticator } from '@aws-amplify/ui-react';
-import amplifyConfig from '../amplify_outputs.json';
+import { configureAmplify } from '@/src/utils/amplifyConfig';
 import { Matchmaking } from '../src/components/Matchmaking';
 import { Game } from '../src/components/Game';
-
 import '@aws-amplify/ui-react/styles.css';
 import { GameProvider, useGame } from '../src/contexts/GameContext';
-import { Navbar } from '@/src/components/Navbar';
+import { Layout } from '@/src/components/Layout';
+import { client } from '@/src/lib/amplifyClient';
 
-Amplify.configure(amplifyConfig);
+// Configure Amplify
+configureAmplify();
 
 export default function Home() {
   return (
@@ -18,25 +20,29 @@ export default function Home() {
       {({ signOut, user }) => {
         const GameContent = () => {
           const { currentGame, setGame } = useGame();
-          return (
-            <>
-              <Navbar signOut={signOut} />
-              <main className="min-h-screen p-4">
-                <div className="max-w-4xl mx-auto">
-                  <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold">Philosophy Quiz</h1>
-                    <button
-                      onClick={signOut}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
+          const [isAdmin, setIsAdmin] = useState(false);
 
-                  {currentGame ? <Game gameId={currentGame.id} /> : <Matchmaking playerId={user?.username || ''} onMatchFound={(gameId) => setGame({ id: gameId })} />}
-                </div>
-              </main>
-            </>
+          useEffect(() => {
+            const checkAdminStatus = async () => {
+              const adminStatus = await isUserAdmin();
+              setIsAdmin(adminStatus);
+            };
+            checkAdminStatus();
+          }, []);
+
+          return (
+            <Layout >
+              {currentGame ? <Game gameId={currentGame.id} user={user} /> : <Matchmaking playerId={user?.username || ''} onMatchFound={async (gameId) => {
+                try {
+                  const gameResponse = await client.models.GameSession.get({ id: gameId });
+                  if (gameResponse.data) {
+                    setGame(gameResponse.data);
+                  }
+                } catch (error) {
+                  console.error('Error fetching game session:', error);
+                }
+              }} />}
+            </Layout>
           );
         };
 

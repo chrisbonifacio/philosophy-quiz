@@ -40,7 +40,18 @@ export class MatchmakingService {
             return updatedSession.data.id;
         }
 
-        // If no available games, create a new one
+        // If no available games, create a new one with random questions
+        // First, get all available questions
+        const questionsResponse = await client.models.Question.list();
+        if (!questionsResponse.data || questionsResponse.data.length < 5) {
+            throw new Error('Not enough questions available');
+        }
+
+        // Randomly select 5 questions
+        const shuffledQuestions = questionsResponse.data
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 5);
+
         const newSession = await client.models.GameSession.create({
             hostId: request.playerId,
             status: 'WAITING',
@@ -48,10 +59,10 @@ export class MatchmakingService {
             scores: JSON.stringify({ [request.playerId]: 0 }),
             currentRound: 0,
             timeLeft: 0,
-            playerAnswers: JSON.stringify({}),
-            currentQuestion: '',
-            currentOptions: [],
-            correctAnswer: '',
+            selectedQuestions: shuffledQuestions.map(q => q.id),
+            currentQuestion: shuffledQuestions[0].id,
+            currentOptions: shuffledQuestions[0].options,
+            correctAnswer: shuffledQuestions[0].correctAnswer,
             lastActionTime: new Date().toISOString()
         });
 

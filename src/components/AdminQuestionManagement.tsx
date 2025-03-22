@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { sampleQuestions, addAllSampleQuestions } from '../data/sampleQuestions';
 import {
     Collection,
     Button,
@@ -107,7 +108,24 @@ const AdminQuestionManagement = () => {
             )}
 
             <Card variation="elevated" padding="1rem" marginBottom="1rem">
-                <Heading level={3}>Create New Question</Heading>
+                <Flex justifyContent="space-between" alignItems="center" marginBottom="1rem">
+                    <Heading level={3}>Create New Question</Heading>
+                    <Button
+                        onClick={() => {
+                            addAllSampleQuestions(client)
+                                .then(() => {
+                                    fetchQuestions();
+                                    setError(null);
+                                })
+                                .catch(err => {
+                                    setError('Error importing sample questions');
+                                    console.error('Error importing questions:', err);
+                                });
+                        }}
+                    >
+                        Import Sample Questions
+                    </Button>
+                </Flex>
                 <Flex direction="column" gap="1rem">
                     <TextField
                         label="Question Text"

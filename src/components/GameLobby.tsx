@@ -34,6 +34,18 @@ export function GameLobby({ user, onGameStart }: GameLobbyProps) {
 
     const createGame = async () => {
         try {
+            // First fetch available questions
+            const questionsResponse = await client.models.Question.list();
+            if (!questionsResponse.data || questionsResponse.data.length < 5) {
+                throw new Error('Not enough questions available');
+            }
+
+            // Randomly select 5 questions
+            const selectedQuestions = questionsResponse.data
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 5);
+
+            // Create new game session with selected questions
             const newGame = await client.models.GameSession.create({
                 hostId: user.username,
                 status: 'WAITING',
@@ -42,10 +54,10 @@ export function GameLobby({ user, onGameStart }: GameLobbyProps) {
                 currentRound: 0,
                 timeLeft: 30,
                 lastActionTime: new Date().toISOString(),
-                playerAnswers: JSON.stringify({}),
-                currentQuestion: '',
-                currentOptions: [],
-                correctAnswer: ''
+                selectedQuestions: selectedQuestions.map(q => q.id),
+                currentQuestion: selectedQuestions[0].id,
+                currentOptions: selectedQuestions[0].options,
+                correctAnswer: selectedQuestions[0].correctAnswer,
             });
 
             if (!newGame.data) {
