@@ -86,15 +86,31 @@ const AdminQuestionManagement = () => {
     };
 
     const isValidQuestion = (question: Question['createType']): boolean => {
-        return !!(
-            question.text &&
-            question.options &&
-            question.options.length === 4 &&
-            question.options.every(option => option?.trim() !== '') &&
-            question.correctAnswer &&
-            question.category &&
-            question.difficulty
-        );
+        // Check if basic fields are present
+        if (!question.text?.trim() || !question.correctAnswer?.trim() || !question.category || !question.difficulty) {
+            setError('Please fill in all required fields');
+            return false;
+        }
+
+        // Validate options array
+        if (!question.options || question.options.length !== 4) {
+            setError('Exactly 4 options are required');
+            return false;
+        }
+
+        // Check if all options have content
+        if (!question.options.every(option => option && option.trim() !== '')) {
+            setError('All options must be filled out');
+            return false;
+        }
+
+        // Verify correct answer matches one of the options
+        if (!question.options.includes(question.correctAnswer)) {
+            setError('Correct answer must match one of the options');
+            return false;
+        }
+
+        return true;
     };
 
     return (
@@ -131,27 +147,38 @@ const AdminQuestionManagement = () => {
                         label="Question Text"
                         value={newQuestion.text}
                         onChange={e => setNewQuestion(prev => ({ ...prev, text: e.target.value }))}
+                        required
                     />
 
                     {newQuestion.options.map((option, index) => (
-                        option ?
-                            <TextField
-                                key={index}
-                                label={`Option ${index + 1}`}
-                                value={option}
-                                onChange={e => {
-                                    const newOptions = [...newQuestion.options!];
-                                    newOptions[index] = e.target.value;
-                                    setNewQuestion(prev => ({ ...prev, options: newOptions }));
-                                }}
-                            /> : null
+                        <TextField
+                            key={index}
+                            label={`Option ${index + 1}`}
+                            value={option || ''}
+                            onChange={e => {
+                                const newOptions = [...newQuestion.options!];
+                                newOptions[index] = e.target.value;
+                                setNewQuestion(prev => ({ ...prev, options: newOptions }));
+                            }}
+                            required
+                        />
                     ))}
 
-                    <TextField
+                    <SelectField
                         label="Correct Answer"
                         value={newQuestion.correctAnswer}
                         onChange={e => setNewQuestion(prev => ({ ...prev, correctAnswer: e.target.value }))}
-                    />
+                        required
+                    >
+                        <option value="" disabled>Select correct answer</option>
+                        {newQuestion.options.map((option, index) => (
+                            option && (
+                                <option key={index} value={option}>
+                                    {option}
+                                </option>
+                            )
+                        ))}
+                    </SelectField>
 
                     <SelectField
                         label="Category"
