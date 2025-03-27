@@ -12,7 +12,7 @@ export const Navbar: React.FC = () => {
         <nav className="bg-gradient-to-r from-indigo-600/80 via-blue-600/80 to-blue-700/80 text-white py-4 px-6 shadow-lg backdrop-blur-md border-b border-white/20 sticky top-0 z-50 supports-[backdrop-filter]:bg-white/10">
             <div className="container mx-auto flex justify-between items-center">
                 <Link href="/" className="text-2xl font-bold text-white hover:text-blue-100 transition-all duration-300 transform hover:scale-105">
-                    Philosophy Quiz
+                    Think Therefore I Quiz
                 </Link>
                 <div className="flex items-center space-x-6">
                     <Link href="/" className="relative text-white/90 hover:text-white transition-all duration-300 font-medium group">
