@@ -6,9 +6,6 @@ import { AdminRoute } from '@/src/components/AdminRoute';
 import { Layout } from '@/src/components/Layout';
 import '@aws-amplify/ui-react/styles.css';
 
-// Configure Amplify before rendering
-configureAmplify();
-
 export default function AdminQuestionsPage() {
     return (
         <AdminRoute>

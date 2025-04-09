@@ -1,0 +1,21 @@
+{
+  "name": "Changelog Update Hook",
+  "description": "Monitors significant code changes and prompts to update CHANGELOG.md with dated entries for new features, dependency changes, and bug fixes",
+  "debounce": "LONG",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "app/**/*.ts",
+      "app/**/*.tsx",
+      "package.json",
+      "amplify/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "I notice significant changes have been made to the codebase. Please help me update the CHANGELOG.md file:\n\n1. If CHANGELOG.md doesn't exist, create it with standard sections (Added, Changed, Fixed, Dependencies)\n2. Review the recent changes in the modified files\n3. Group the changes by type (features, fixes, dependencies, etc.)\n4. Add a new dated entry to CHANGELOG.md with the changes properly categorized\n5. Maintain the format:\n\n# Changelog\n\n## [Date YYYY-MM-DD]\n\n### Added\n- New features\n\n### Changed\n- Changes to existing functionality\n\n### Fixed\n- Bug fixes\n\n### Dependencies\n- Dependency updates\n\nPlease analyze the changes and update CHANGELOG.md accordingly."
+  }
+}

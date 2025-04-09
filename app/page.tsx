@@ -11,9 +11,6 @@ import { GameProvider, useGame } from '../src/contexts/GameContext';
 import { Layout } from '@/src/components/Layout';
 import { client } from '@/src/lib/amplifyClient';
 
-// Configure Amplify
-configureAmplify();
-
 export default function Home() {
   return (
     <Authenticator>

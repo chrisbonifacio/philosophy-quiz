@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import './globals.css'
+import { AmplifyProvider } from '@/src/components/AmplifyProvider'
 
 export const metadata: Metadata = {
   title: 'Philosophy Quiz',
@@ -13,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AmplifyProvider>
+          {children}
+        </AmplifyProvider>
+      </body>
     </html>
   )
 }

@@ -34,3 +34,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+
+## Using Icons
+
+This project uses [React Icons](https://react-icons.github.io/react-icons/) for icons. To use icons in your components:
+
+1. Import icons from their respective collections:
+```jsx
+import { FaPhilosophyIcon } from 'react-icons/fa'; // Font Awesome
+import { IoMdTimer } from 'react-icons/io';        // Ionicons
+import { BsFillQuestionCircleFill } from 'react-icons/bs'; // Bootstrap
+```
+
+2. Use them in your components:
+```jsx
+<FaPhilosophyIcon size={24} className="text-blue-600" />
+```
+
+Browse available icons at: https://react-icons.github.io/react-icons/
